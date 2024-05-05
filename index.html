@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My DApp</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Ethan's Digital Marketplace</h1>
+    <button id="connectButton">Connect Wallet</button>
+    
+    <!-- Form for listing new items -->
+    <form id="listItemForm" style="display:none;">
+        <input type="text" id="title" placeholder="Item Title" required>
+        <input type="text" id="description" placeholder="Item Description" required>
+        <input type="text" id="price" placeholder="Item Price in Ether" required>
+        <button type="submit">List Item</button>
+    </form>
+
+    <!-- Display area for transaction hashes -->
+    <div id="transactionOutput" style="margin-top: 20px; font-family: monospace; color: green;"></div>
+
+    <!-- Area where listed items will be displayed -->
+    <div id="items">
+        <!-- Items will be listed here -->
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
