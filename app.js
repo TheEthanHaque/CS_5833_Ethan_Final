@@ -1,5 +1,5 @@
 window.addEventListener('load', async () => {
-    // contract information
+    // Initialize Web3 and contract details
     const web3 = new Web3(window.ethereum);
     const contractAddress = "0x70B86d5bE5e59f52d8C5917d8db927945f50B6eB";
     const abi = [
@@ -141,10 +141,10 @@ window.addEventListener('load', async () => {
             "stateMutability": "view",
             "type": "function"
         }
-    ]; // The ABI array as you provided previously
+    ];
 
-    // connect wallet button and functionality
     const contract = new web3.eth.Contract(abi, contractAddress);
+
     const connectButton = document.getElementById('connectButton');
     const listItemForm = document.getElementById('listItemForm');
     const itemsContainer = document.getElementById('items');
@@ -158,7 +158,6 @@ window.addEventListener('load', async () => {
         displayItems();
     });
 
-    // List item functionality
     listItemForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         const title = document.getElementById('title').value;
@@ -175,20 +174,25 @@ window.addEventListener('load', async () => {
             console.error('Error listing item:', error);
         }
     });
-    
-    // purchase item thing
+
     window.purchaseItem = async (itemId) => {
         try {
-            const receipt = await contract.methods.purchaseItem(itemId).send({ from: ethereum.selectedAddress, value: web3.utils.toWei('0.0001', 'ether') });
+            const itemPrice = await contract.methods.items(itemId).call().then(item => item.price);
+            const receipt = await contract.methods.purchaseItem(itemId).send({
+                from: ethereum.selectedAddress,
+                value: itemPrice,
+                // Setting a specific gas limit
+                gasLimit: web3.utils.toHex(800000)  // Setting a specific gas limit
+            });
             transactionDetails[itemId].purchaseHash = receipt.transactionHash;
-            localStorage.setItem('transactionDetails', JSON.stringify(transactionDetails)); 
+            localStorage.setItem('transactionDetails', JSON.stringify(transactionDetails));
             displayItems();
         } catch (error) {
             console.error('Error purchasing item:', error);
         }
     };
+    
 
-    //get the previous and purchaesed transaction hashes that fetches everything from the blockchain
     async function fetchTransactionHashes() {
         const listedEvents = await contract.getPastEvents('ItemListed', { fromBlock: 0, toBlock: 'latest' });
         const purchasedEvents = await contract.getPastEvents('ItemPurchased', { fromBlock: 0, toBlock: 'latest' });
